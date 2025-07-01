@@ -1,633 +1,258 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Haunted Locations App</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hey Ghost - Paranormal Communication App</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Creepster:wght@400&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
 </head>
-<body class="bg-gray-900">
-  <div id="root"></div>
-  <!-- React and ReactDOM -->
-  <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
-  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
-  <!-- Babel for JSX support in browser -->
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <!-- Your App Code -->
-  <script type="text/babel">
-    function App() {
-      const [currentScreen, setCurrentScreen] = React.useState('home');
-      const [user, setUser] = React.useState(null);
-      const [locations, setLocations] = React.useState([]);
-      const [selectedLocation, setSelectedLocation] = React.useState(null);
-      const [filters, setFilters] = React.useState({
-        state: '',
-        city: '',
-        type: '',
-        popularity: ''
-      });
-
-      // Mock data for haunted locations
-      const mockLocations = [
-        {
-          id: 1,
-          name: "Eastern State Penitentiary",
-          state: "Pennsylvania",
-          city: "Philadelphia",
-          type: "Historical Building",
-          popularity: "High",
-          lat: 39.9681,
-          lng: -75.1723,
-          description: "Former prison known for its revolutionary system of separate incarceration",
-          history: "Built in 1829, this prison was once the most famous and expensive prison in the world.",
-          sightings: ["Shadow figures in Cell Block 12", "Disembodied voices", "Cold spots"],
-          photos: ["https://placehold.co/400x300", "https://placehold.co/400x300"],
-          rating: 4.5,
-          reviews: 127,
-          bookingAvailable: true,
-          price: 45
-        },
-        {
-          id: 2,
-          name: "Waverly Hills Sanatorium",
-          state: "Kentucky",
-          city: "Louisville",
-          type: "Hospital",
-          popularity: "Very High",
-          lat: 38.1498,
-          lng: -85.9341,
-          description: "Former tuberculosis hospital with a dark history",
-          history: "Opened in 1910, treated thousands of tuberculosis patients until 1961.",
-          sightings: ["Room 502 apparitions", "Children's voices", "Shadow people"],
-          photos: ["https://placehold.co/400x300", "https://placehold.co/400x300"],
-          rating: 4.8,
-          reviews: 203,
-          bookingAvailable: true,
-          price: 75
-        },
-        {
-          id: 3,
-          name: "Bachelor's Grove Cemetery",
-          state: "Illinois",
-          city: "Midlothian",
-          type: "Cemetery",
-          popularity: "High",
-          lat: 41.6331,
-          lng: -87.7706,
-          description: "One of the most haunted cemeteries in America",
-          history: "Established in 1844, abandoned and vandalized over the years.",
-          sightings: ["White Lady ghost", "Phantom farmhouse", "Glowing orbs"],
-          photos: ["https://placehold.co/400x300", "https://placehold.co/400x300"],
-          rating: 4.3,
-          reviews: 89,
-          bookingAvailable: false,
-          price: 0
-        }
-      ];
-
-      React.useEffect(() => {
-        setLocations(mockLocations);
-      }, []);
-
-      // Navigation Component
-      const Navigation = () => (
-        <div className="fixed bottom-0 left-0 right-0 bg-black border-t border-pink-500 flex justify-around py-2 z-50">
-          {[
-            { id: 'home', icon: '🏠', label: 'Home' },
-            { id: 'map', icon: '🗺️', label: 'Map' },
-            { id: 'randomizer', icon: '🎲', label: 'Random' },
-            { id: 'community', icon: '👥', label: 'Community' },
-            { id: 'evidence', icon: '📸', label: 'Evidence' },
-            { id: 'profile', icon: '👤', label: 'Profile' }
-          ].map(item => (
-            <button
-              key={item.id}
-              onClick={() => setCurrentScreen(item.id)}
-              className={`flex flex-col items-center px-2 py-1 rounded ${
-                currentScreen === item.id ? 'text-pink-400' : 'text-gray-400'
-              } hover:text-pink-300 transition-colors`}
-            >
-              <span className="text-lg">{item.icon}</span>
-              <span className="text-xs">{item.label}</span>
-            </button>
-          ))}
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="https://cdn.abacus.ai/images/8d0659b7-e98d-4656-9810-5bac660c17ce.png" alt="Hey Ghost Logo" class="logo-icon">
+                <span class="logo-text">Hey Ghost</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link active">Home</a></li>
+                <li><a href="demo.html" class="nav-link">Demo</a></li>
+                <li><a href="ghost-link.html" class="nav-link">Ghost Link</a></li>
+                <li><a href="my-entity.html" class="nav-link">My Entity</a></li>
+                <li><a href="signup.html" class="nav-link signup-btn">Sign Up</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
         </div>
-      );
+    </nav>
 
-      // Header Component
-      const Header = ({ title, showBack = false }) => (
-        <div className="bg-black text-white p-4 border-b border-pink-500 flex items-center">
-          {showBack && (
-            <button
-              onClick={() => setCurrentScreen('home')}
-              className="text-pink-400 mr-3 text-xl"
-            >
-              ←
-            </button>
-          )}
-          <h1 className="text-xl font-bold text-pink-400">{title}</h1>
-        </div>
-      );
-
-      // Home Screen
-      const HomeScreen = () => (
-        <div className="bg-gray-900 min-h-screen text-white">
-          <Header title="👻 Haunted Locations" />
-          <div className="p-4">
-            {/* Welcome Section */}
-            <div className="bg-black rounded-lg p-6 mb-6 border border-pink-500">
-              <h2 className="text-2xl font-bold text-pink-400 mb-2">Welcome, Ghost Hunter!</h2>
-              <p className="text-gray-300 mb-4">Discover the most haunted places across America</p>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-yellow-400">{locations.length}</div>
-                  <div className="text-sm text-gray-400">Locations</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-green-400">50</div>
-                  <div className="text-sm text-gray-400">States</div>
-                </div>
-              </div>
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-bg">
+                <img src="https://cdn.abacus.ai/images/872c9540-a565-4b02-9859-e7b625ccfd93.png" alt="Dark Atmospheric Background" class="hero-bg-img">
+                <div class="glitch-overlay"></div>
             </div>
-
-            {/* Quick Actions */}
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              <button
-                onClick={() => setCurrentScreen('map')}
-                className="bg-pink-600 hover:bg-pink-700 p-4 rounded-lg text-center transition-colors"
-              >
-                <div className="text-2xl mb-2">🗺️</div>
-                <div className="font-semibold">Explore Map</div>
-              </button>
-              <button
-                onClick={() => setCurrentScreen('randomizer')}
-                className="bg-yellow-600 hover:bg-yellow-700 p-4 rounded-lg text-center transition-colors"
-              >
-                <div className="text-2xl mb-2">🎲</div>
-                <div className="font-semibold">Random Hunt</div>
-              </button>
-            </div>
-
-            {/* Featured Locations */}
-            <div className="mb-6">
-              <h3 className="text-lg font-bold text-pink-400 mb-3">Featured Haunted Locations</h3>
-              {locations.slice(0, 3).map(location => (
-                <div
-                  key={location.id}
-                  onClick={() => {
-                    setSelectedLocation(location);
-                    setCurrentScreen('location-detail');
-                  }}
-                  className="bg-black rounded-lg p-4 mb-3 border border-gray-700 hover:border-pink-500 cursor-pointer transition-colors"
-                >
-                  <div className="flex justify-between items-start mb-2">
-                    <h4 className="font-semibold text-white">{location.name}</h4>
-                    <span className="text-yellow-400">⭐ {location.rating}</span>
-                  </div>
-                  <p className="text-gray-400 text-sm mb-2">{location.city}, {location.state}</p>
-                  <p className="text-gray-300 text-sm">{location.description}</p>
+            <div class="hero-content">
+                <div class="hero-mascot">
+                    <img src="https://cdn.abacus.ai/images/97ef0606-c4e5-4fcd-bae6-e9ba39c61412.png" alt="Ghost Mascot" class="mascot-img pulse-animation">
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      );
-
-      // Map Screen
-      const MapScreen = () => (
-        <div className="bg-gray-900 min-h-screen text-white">
-          <Header title="🗺️ Haunted Map" showBack />
-          {/* Filters */}
-          <div className="p-4 bg-black border-b border-gray-700">
-            <div className="grid grid-cols-2 gap-2 mb-3">
-              <select
-                value={filters.state}
-                onChange={(e) => setFilters({...filters, state: e.target.value})}
-                className="bg-gray-800 text-white p-2 rounded border border-gray-600"
-              >
-                <option value="">All States</option>
-                <option value="Pennsylvania">Pennsylvania</option>
-                <option value="Kentucky">Kentucky</option>
-                <option value="Illinois">Illinois</option>
-              </select>
-              <select
-                value={filters.type}
-                onChange={(e) => setFilters({...filters, type: e.target.value})}
-                className="bg-gray-800 text-white p-2 rounded border border-gray-600"
-              >
-                <option value="">All Types</option>
-                <option value="Historical Building">Historical Building</option>
-                <option value="Cemetery">Cemetery</option>
-                <option value="Hospital">Hospital</option>
-                <option value="Hotel">Hotel</option>
-              </select>
-            </div>
-          </div>
-          {/* Map Placeholder */}
-          <div className="relative h-96 bg-gray-800 m-4 rounded-lg border border-pink-500">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center">
-                <div className="text-4xl mb-2">🗺️</div>
-                <p className="text-gray-400">Interactive Map</p>
-                <p className="text-sm text-gray-500">Showing {locations.length} haunted locations</p>
-              </div>
-            </div>
-            {/* Mock pins */}
-            <div className="absolute top-20 left-20 text-red-500 text-2xl cursor-pointer" title="Eastern State Penitentiary">📍</div>
-            <div className="absolute top-32 left-32 text-red-500 text-2xl cursor-pointer" title="Waverly Hills">📍</div>
-            <div className="absolute top-28 left-28 text-red-500 text-2xl cursor-pointer" title="Bachelor's Grove">📍</div>
-          </div>
-          {/* Location List */}
-          <div className="p-4">
-            <h3 className="text-lg font-bold text-pink-400 mb-3">Nearby Locations</h3>
-            {locations.map(location => (
-              <div
-                key={location.id}
-                onClick={() => {
-                  setSelectedLocation(location);
-                  setCurrentScreen('location-detail');
-                }}
-                className="bg-black rounded-lg p-4 mb-3 border border-gray-700 hover:border-pink-500 cursor-pointer transition-colors"
-              >
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-white mb-1">{location.name}</h4>
-                    <p className="text-gray-400 text-sm mb-1">{location.city}, {location.state}</p>
-                    <p className="text-gray-300 text-sm">{location.type}</p>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-yellow-400 mb-1">⭐ {location.rating}</div>
-                    <div className="text-xs text-gray-500">{location.reviews} reviews</div>
-                  </div>
+                <h1 class="hero-title glitch-text">
+                    <span class="line-1">COMMUNICATE</span>
+                    <span class="line-2">WITH THE</span>
+                    <span class="line-3">BEYOND</span>
+                </h1>
+                <p class="hero-subtitle">Advanced paranormal communication technology at your fingertips</p>
+                <div class="hero-buttons">
+                    <a href="demo.html" class="btn btn-primary">Try Demo</a>
+                    <a href="signup.html" class="btn btn-secondary">Get Started</a>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      );
-
-      // Location Detail Screen
-      const LocationDetailScreen = () => {
-        if (!selectedLocation) return null;
-        return (
-          <div className="bg-gray-900 min-h-screen text-white">
-            <Header title={selectedLocation.name} showBack />
-            <div className="p-4">
-              {/* Main Image */}
-              <img
-                src={selectedLocation.photos[0]}
-                alt={selectedLocation.name}
-                className="w-full h-48 object-cover rounded-lg mb-4 border border-pink-500"
-              />
-              {/* Basic Info */}
-              <div className="bg-black rounded-lg p-4 mb-4 border border-gray-700">
-                <div className="flex justify-between items-start mb-3">
-                  <div>
-                    <h2 className="text-xl font-bold text-pink-400">{selectedLocation.name}</h2>
-                    <p className="text-gray-400">{selectedLocation.city}, {selectedLocation.state}</p>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-yellow-400 text-lg">⭐ {selectedLocation.rating}</div>
-                    <div className="text-xs text-gray-500">{selectedLocation.reviews} reviews</div>
-                  </div>
-                </div>
-                <p className="text-gray-300 mb-3">{selectedLocation.description}</p>
-                <div className="flex gap-2">
-                  <span className="bg-pink-600 px-2 py-1 rounded text-xs">{selectedLocation.type}</span>
-                  <span className="bg-yellow-600 px-2 py-1 rounded text-xs">{selectedLocation.popularity}</span>
-                </div>
-              </div>
-              {/* History */}
-              <div className="bg-black rounded-lg p-4 mb-4 border border-gray-700">
-                <h3 className="text-lg font-bold text-pink-400 mb-2">📜 History</h3>
-                <p className="text-gray-300">{selectedLocation.history}</p>
-              </div>
-              {/* Paranormal Activity */}
-              <div className="bg-black rounded-lg p-4 mb-4 border border-gray-700">
-                <h3 className="text-lg font-bold text-pink-400 mb-2">👻 Reported Sightings</h3>
-                {selectedLocation.sightings.map((sighting, index) => (
-                  <div key={index} className="flex items-center mb-2">
-                    <span className="text-red-400 mr-2">•</span>
-                    <span className="text-gray-300">{sighting}</span>
-                  </div>
-                ))}
-              </div>
-              {/* Booking Section */}
-              {selectedLocation.bookingAvailable && (
-                <div className="bg-black rounded-lg p-4 mb-4 border border-green-500">
-                  <h3 className="text-lg font-bold text-green-400 mb-2">🎫 Book Investigation</h3>
-                  <p className="text-gray-300 mb-3">Join a guided paranormal investigation</p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-2xl font-bold text-green-400">${selectedLocation.price}</span>
-                    <button className="bg-green-600 hover:bg-green-700 px-6 py-2 rounded font-semibold transition-colors">
-                      Book Now
-                    </button>
-                  </div>
-                </div>
-              )}
-              {/* Action Buttons */}
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <button className="bg-pink-600 hover:bg-pink-700 p-3 rounded-lg font-semibold transition-colors">
-                  📸 Upload Evidence
-                </button>
-                <button className="bg-yellow-600 hover:bg-yellow-700 p-3 rounded-lg font-semibold transition-colors">
-                  ⭐ Write Review
-                </button>
-              </div>
-            </div>
-          </div>
-        );
-      };
-
-      // Randomizer Screen
-      const RandomizerScreen = () => {
-        const [distance, setDistance] = React.useState(50);
-        const [randomLocation, setRandomLocation] = React.useState(null);
-
-        const getRandomLocation = () => {
-          const randomIndex = Math.floor(Math.random() * locations.length);
-          setRandomLocation(locations[randomIndex]);
-        };
-
-        return (
-          <div className="bg-gray-900 min-h-screen text-white">
-            <Header title="🎲 Random Hunt" showBack />
-            <div className="p-4">
-              <div className="bg-black rounded-lg p-6 mb-6 border border-yellow-500">
-                <h2 className="text-xl font-bold text-yellow-400 mb-4">Find Your Next Adventure</h2>
-                <div className="mb-4">
-                  <label className="block text-gray-300 mb-2">Maximum Distance (miles)</label>
-                  <input
-                    type="range"
-                    min="10"
-                    max="500"
-                    value={distance}
-                    onChange={(e) => setDistance(e.target.value)}
-                    className="w-full"
-                  />
-                  <div className="text-center text-yellow-400 font-bold">{distance} miles</div>
-                </div>
-                <button
-                  onClick={getRandomLocation}
-                  className="w-full bg-yellow-600 hover:bg-yellow-700 p-4 rounded-lg font-bold text-lg transition-colors"
-                >
-                  🎲 Find Random Location
-                </button>
-              </div>
-              {randomLocation && (
-                <div className="bg-black rounded-lg p-4 border border-pink-500">
-                  <h3 className="text-lg font-bold text-pink-400 mb-2">Your Random Destination</h3>
-                  <div
-                    onClick={() => {
-                      setSelectedLocation(randomLocation);
-                      setCurrentScreen('location-detail');
-                    }}
-                    className="cursor-pointer hover:bg-gray-800 p-3 rounded transition-colors"
-                  >
-                    <h4 className="font-semibold text-white mb-1">{randomLocation.name}</h4>
-                    <p className="text-gray-400 text-sm mb-2">{randomLocation.city}, {randomLocation.state}</p>
-                    <p className="text-gray-300 text-sm mb-2">{randomLocation.description}</p>
-                    <div className="flex justify-between items-center">
-                      <span className="text-yellow-400">⭐ {randomLocation.rating}</span>
-                      <span className="text-pink-400">View Details →</span>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number">10K+</span>
+                        <span class="stat-label">Active Users</span>
                     </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        );
-      };
-
-      // Community Screen
-      const CommunityScreen = () => (
-        <div className="bg-gray-900 min-h-screen text-white">
-          <Header title="👥 Community" showBack />
-          <div className="p-4">
-            {/* User Stats */}
-            <div className="bg-black rounded-lg p-4 mb-4 border border-green-500">
-              <h3 className="text-lg font-bold text-green-400 mb-3">Your Profile</h3>
-              <div className="grid grid-cols-3 gap-4 text-center">
-                <div>
-                  <div className="text-2xl font-bold text-yellow-400">12</div>
-                  <div className="text-xs text-gray-400">Investigations</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-pink-400">8</div>
-                  <div className="text-xs text-gray-400">Evidence Uploads</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-green-400">156</div>
-                  <div className="text-xs text-gray-400">Reputation Points</div>
-                </div>
-              </div>
-            </div>
-            {/* Badges */}
-            <div className="bg-black rounded-lg p-4 mb-4 border border-gray-700">
-              <h3 className="text-lg font-bold text-pink-400 mb-3">🏆 Your Badges</h3>
-              <div className="flex gap-2 flex-wrap">
-                <span className="bg-yellow-600 px-3 py-1 rounded-full text-sm">👻 First Investigation</span>
-                <span className="bg-pink-600 px-3 py-1 rounded-full text-sm">📸 Evidence Hunter</span>
-                <span className="bg-green-600 px-3 py-1 rounded-full text-sm">⭐ Top Reviewer</span>
-              </div>
-            </div>
-            {/* Nearby Hunters */}
-            <div className="bg-black rounded-lg p-4 mb-4 border border-gray-700">
-              <h3 className="text-lg font-bold text-pink-400 mb-3">👥 Nearby Ghost Hunters</h3>
-              {[
-                { name: "Sarah M.", distance: "2.3 miles", investigations: 23, badge: "👻" },
-                { name: "Mike R.", distance: "4.1 miles", investigations: 15, badge: "📸" },
-                { name: "Emma K.", distance: "5.8 miles", investigations: 31, badge: "⭐" }
-              ].map((hunter, index) => (
-                <div key={index} className="flex justify-between items-center p-3 hover:bg-gray-800 rounded cursor-pointer">
-                  <div>
-                    <div className="font-semibold text-white">{hunter.badge} {hunter.name}</div>
-                    <div className="text-sm text-gray-400">{hunter.distance} • {hunter.investigations} investigations</div>
-                  </div>
-                  <button className="bg-pink-600 hover:bg-pink-700 px-3 py-1 rounded text-sm transition-colors">
-                    Connect
-                  </button>
-                </div>
-              ))}
-            </div>
-            {/* Forums */}
-            <div className="bg-black rounded-lg p-4 border border-gray-700">
-              <h3 className="text-lg font-bold text-pink-400 mb-3">💬 Recent Forum Posts</h3>
-              {[
-                { title: "Strange EVP from Eastern State", author: "GhostHunter92", replies: 12, time: "2h ago" },
-                { title: "Best equipment for beginners?", author: "NewInvestigator", replies: 8, time: "4h ago" },
-                { title: "Waverly Hills investigation report", author: "ParanormalPro", replies: 23, time: "1d ago" }
-              ].map((post, index) => (
-                <div key={index} className="p-3 hover:bg-gray-800 rounded cursor-pointer border-b border-gray-700 last:border-b-0">
-                  <div className="font-semibold text-white mb-1">{post.title}</div>
-                  <div className="text-sm text-gray-400">
-                    by {post.author} • {post.replies} replies • {post.time}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      );
-
-      // Evidence Screen
-      const EvidenceScreen = () => (
-        <div className="bg-gray-900 min-h-screen text-white">
-          <Header title="📸 Evidence Hub" showBack />
-          <div className="p-4">
-            {/* Upload Section */}
-            <div className="bg-black rounded-lg p-4 mb-4 border border-pink-500">
-              <h3 className="text-lg font-bold text-pink-400 mb-3">📤 Submit Evidence</h3>
-              <div className="grid grid-cols-3 gap-2 mb-3">
-                <button className="bg-gray-800 hover:bg-gray-700 p-3 rounded text-center transition-colors">
-                  <div className="text-2xl mb-1">📸</div>
-                  <div className="text-xs">Photo</div>
-                </button>
-                <button className="bg-gray-800 hover:bg-gray-700 p-3 rounded text-center transition-colors">
-                  <div className="text-2xl mb-1">🎥</div>
-                  <div className="text-xs">Video</div>
-                </button>
-                <button className="bg-gray-800 hover:bg-gray-700 p-3 rounded text-center transition-colors">
-                  <div className="text-2xl mb-1">🎵</div>
-                  <div className="text-xs">Audio</div>
-                </button>
-              </div>
-            </div>
-            {/* Leaderboard */}
-            <div className="bg-black rounded-lg p-4 mb-4 border border-yellow-500">
-              <h3 className="text-lg font-bold text-yellow-400 mb-3">🏆 Top Contributors</h3>
-              {[
-                { rank: 1, name: "ParanormalPro", score: 2847, badge: "👑" },
-                { rank: 2, name: "GhostHunter92", score: 2156, badge: "🥈" },
-                { rank: 3, name: "SpiritSeeker", score: 1923, badge: "🥉" },
-                { rank: 4, name: "You", score: 1456, badge: "📸" }
-              ].map((user, index) => (
-                <div key={index} className={`flex justify-between items-center p-2 rounded ${user.name === 'You' ? 'bg-pink-900' : ''}`}>
-                  <div className="flex items-center">
-                    <span className="text-lg mr-3">{user.badge}</span>
-                    <div>
-                      <div className="font-semibold text-white">{user.name}</div>
-                      <div className="text-sm text-gray-400">#{user.rank}</div>
+                    <div class="stat">
+                        <span class="stat-number">50K+</span>
+                        <span class="stat-label">Sessions Recorded</span>
                     </div>
-                  </div>
-                  <div className="text-yellow-400 font-bold">{user.score}</div>
-                </div>
-              ))}
-            </div>
-            {/* Recent Evidence */}
-            <div className="bg-black rounded-lg p-4 border border-gray-700">
-              <h3 className="text-lg font-bold text-pink-400 mb-3">🔍 Recent Evidence</h3>
-              {[
-                { type: "📸", title: "Shadow figure at Eastern State", author: "GhostHunter92", rating: 4.2, location: "Eastern State Penitentiary" },
-                { type: "🎥", title: "Door slamming at Waverly Hills", author: "ParanormalPro", rating: 4.8, location: "Waverly Hills Sanatorium" },
-                { type: "🎵", title: "EVP recording from Bachelor's Grove", author: "SpiritSeeker", rating: 3.9, location: "Bachelor's Grove Cemetery" }
-              ].map((evidence, index) => (
-                <div key={index} className="p-3 hover:bg-gray-800 rounded cursor-pointer border-b border-gray-700 last:border-b-0">
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex items-center">
-                      <span className="text-2xl mr-3">{evidence.type}</span>
-                      <div>
-                        <div className="font-semibold text-white">{evidence.title}</div>
-                        <div className="text-sm text-gray-400">by {evidence.author}</div>
-                      </div>
+                    <div class="stat">
+                        <span class="stat-number">99.9%</span>
+                        <span class="stat-label">Detection Accuracy</span>
                     </div>
-                    <div className="text-yellow-400">⭐ {evidence.rating}</div>
-                  </div>
-                  <div className="text-sm text-gray-500 ml-11">{evidence.location}</div>
                 </div>
-              ))}
             </div>
-          </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features">
+            <div class="container">
+                <h2 class="section-title">Paranormal Detection Suite</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <img src="https://cdn.abacus.ai/images/381b203a-2997-4496-9a1b-4051014d4cf8.png" alt="EMF Detection">
+                        </div>
+                        <h3>EMF Detection</h3>
+                        <p>Real-time electromagnetic field monitoring with 0-100% paranormal activity scoring</p>
+                        <ul>
+                            <li>✓ Live EMF readings</li>
+                            <li>✓ Activity spike alerts</li>
+                            <li>✓ Historical data logging</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <div class="icon-placeholder">🎵</div>
+                        </div>
+                        <h3>EVP Module</h3>
+                        <p>Electronic Voice Phenomena recording and analysis system</p>
+                        <ul>
+                            <li>✓ High-quality audio capture</li>
+                            <li>✓ Voice enhancement filters</li>
+                            <li>✓ Automatic anomaly detection</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <div class="icon-placeholder">👻</div>
+                        </div>
+                        <h3>Spirit Response</h3>
+                        <p>Dynamic communication system with extensive voice library</p>
+                        <ul>
+                            <li>✓ Real-time responses</li>
+                            <li>✓ Voice pattern analysis</li>
+                            <li>✓ Context-aware replies</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <div class="icon-placeholder">🔮</div>
+                        </div>
+                        <h3>AR Mode</h3>
+                        <p>Augmented reality visualization of paranormal phenomena</p>
+                        <ul>
+                            <li>✓ Real-time spirit visuals</li>
+                            <li>✓ Energy field overlays</li>
+                            <li>✓ Interactive 3D mapping</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- App Suite Section -->
+        <section class="app-suite">
+            <div class="container">
+                <h2 class="section-title">Complete Paranormal Toolkit</h2>
+                <div class="apps-grid">
+                    <div class="app-card">
+                        <div class="app-icon">
+                            <img src="https://cdn.abacus.ai/images/8d0659b7-e98d-4656-9810-5bac660c17ce.png" alt="Hey Ghost">
+                        </div>
+                        <h3>Hey Ghost</h3>
+                        <p>Main paranormal communication platform with advanced detection and response systems</p>
+                        <a href="demo.html" class="app-link">Try Demo →</a>
+                    </div>
+                    <div class="app-card">
+                        <div class="app-icon">
+                            <div class="icon-placeholder">🏚️</div>
+                        </div>
+                        <h3>Ghost Link</h3>
+                        <p>Discover and share haunted locations worldwide. Find nearby paranormal hotspots</p>
+                        <a href="ghost-link.html" class="app-link">Explore →</a>
+                    </div>
+                    <div class="app-card">
+                        <div class="app-icon">
+                            <div class="icon-placeholder">🔍</div>
+                        </div>
+                        <h3>My Entity</h3>
+                        <p>AI-powered paranormal evidence analyzer with community investigation cases</p>
+                        <a href="my-entity.html" class="app-link">Analyze →</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing Section -->
+        <section class="pricing">
+            <div class="container">
+                <h2 class="section-title">Choose Your Plan</h2>
+                <div class="pricing-grid">
+                    <div class="pricing-card">
+                        <h3>Free</h3>
+                        <div class="price">$0<span>/month</span></div>
+                        <ul>
+                            <li>✓ Basic EMF detection</li>
+                            <li>✓ 5 minutes EVP recording</li>
+                            <li>✓ Limited spirit responses</li>
+                            <li>✓ Basic session logging</li>
+                        </ul>
+                        <a href="signup.html" class="btn btn-outline">Get Started</a>
+                    </div>
+                    <div class="pricing-card featured">
+                        <div class="featured-badge">Most Popular</div>
+                        <h3>Premium</h3>
+                        <div class="price">$9.99<span>/month</span></div>
+                        <ul>
+                            <li>✓ Advanced EMF with alerts</li>
+                            <li>✓ Unlimited EVP recording</li>
+                            <li>✓ Full spirit response library</li>
+                            <li>✓ AR mode access</li>
+                            <li>✓ Data export & sharing</li>
+                            <li>✓ Priority support</li>
+                        </ul>
+                        <a href="signup.html" class="btn btn-primary">Go Premium</a>
+                    </div>
+                    <div class="pricing-card">
+                        <h3>Pro</h3>
+                        <div class="price">$19.99<span>/month</span></div>
+                        <ul>
+                            <li>✓ All Premium features</li>
+                            <li>✓ AI evidence analysis</li>
+                            <li>✓ Custom voice libraries</li>
+                            <li>✓ Advanced AR features</li>
+                            <li>✓ API access</li>
+                            <li>✓ White-label options</li>
+                        </ul>
+                        <a href="signup.html" class="btn btn-outline">Go Pro</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta">
+            <div class="container">
+                <div class="cta-content">
+                    <h2>Ready to Make Contact?</h2>
+                    <p>Join thousands of paranormal investigators using Hey Ghost to communicate with the beyond</p>
+                    <div class="cta-buttons">
+                        <a href="demo.html" class="btn btn-primary">Try Interactive Demo</a>
+                        <a href="signup.html" class="btn btn-secondary">Sign Up Now</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Hey Ghost Suite</h4>
+                    <ul>
+                        <li><a href="index.html">Hey Ghost</a></li>
+                        <li><a href="ghost-link.html">Ghost Link</a></li>
+                        <li><a href="my-entity.html">My Entity</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Community</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Hey Ghost. All rights reserved.</p>
+            </div>
         </div>
-      );
+    </footer>
 
-      // Profile Screen
-      const ProfileScreen = () => (
-        <div className="bg-gray-900 min-h-screen text-white">
-          <Header title="👤 Profile" showBack />
-          <div className="p-4">
-            {/* Profile Header */}
-            <div className="bg-black rounded-lg p-6 mb-4 border border-pink-500 text-center">
-              <div className="w-20 h-20 bg-pink-600 rounded-full mx-auto mb-3 flex items-center justify-center text-2xl">
-                👤
-              </div>
-              <h2 className="text-xl font-bold text-pink-400 mb-1">Ghost Hunter</h2>
-              <p className="text-gray-400 mb-3">Member since October 2024</p>
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <div className="text-2xl font-bold text-yellow-400">12</div>
-                  <div className="text-xs text-gray-400">Investigations</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-pink-400">8</div>
-                  <div className="text-xs text-gray-400">Evidence</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-green-400">156</div>
-                  <div className="text-xs text-gray-400">Points</div>
-                </div>
-              </div>
-            </div>
-            {/* Settings */}
-            <div className="bg-black rounded-lg p-4 mb-4 border border-gray-700">
-              <h3 className="text-lg font-bold text-pink-400 mb-3">⚙️ Settings</h3>
-              {[
-                { icon: "🔔", title: "Notifications", subtitle: "Manage your alerts" },
-                { icon: "🔒", title: "Privacy", subtitle: "Control your data" },
-                { icon: "💳", title: "Premium", subtitle: "Upgrade your account" },
-                { icon: "❓", title: "Help & Support", subtitle: "Get assistance" }
-              ].map((item, index) => (
-                <div key={index} className="flex items-center p-3 hover:bg-gray-800 rounded cursor-pointer">
-                  <span className="text-2xl mr-4">{item.icon}</span>
-                  <div>
-                    <div className="font-semibold text-white">{item.title}</div>
-                    <div className="text-sm text-gray-400">{item.subtitle}</div>
-                  </div>
-                  <span className="ml-auto text-gray-400">→</span>
-                </div>
-              ))}
-            </div>
-            {/* Premium Upgrade */}
-            <div className="bg-gradient-to-r from-pink-600 to-yellow-600 rounded-lg p-4 mb-4">
-              <h3 className="text-lg font-bold text-white mb-2">✨ Upgrade to Premium</h3>
-              <p className="text-white text-sm mb-3">Unlock exclusive locations, advanced features, and priority booking</p>
-              <button className="bg-white text-pink-600 px-6 py-2 rounded font-semibold hover:bg-gray-100 transition-colors">
-                Upgrade Now - $9.99/month
-              </button>
-            </div>
-            {/* Sign Out */}
-            <button className="w-full bg-red-600 hover:bg-red-700 p-3 rounded-lg font-semibold transition-colors">
-              🚪 Sign Out
-            </button>
-          </div>
-        </div>
-      );
-
-      // Main render logic
-      const renderScreen = () => {
-        switch (currentScreen) {
-          case 'home': return <HomeScreen />;
-          case 'map': return <MapScreen />;
-          case 'location-detail': return <LocationDetailScreen />;
-          case 'randomizer': return <RandomizerScreen />;
-          case 'community': return <CommunityScreen />;
-          case 'evidence': return <EvidenceScreen />;
-          case 'profile': return <ProfileScreen />;
-          default: return <HomeScreen />;
-        }
-      };
-
-      return (
-        <div className="max-w-md mx-auto bg-gray-900 min-h-screen relative">
-          {renderScreen()}
-          <Navigation />
-          <div className="h-16"></div> {/* Spacer for navigation */}
-        </div>
-      );
-    }
-
-    ReactDOM.render(<App />, document.getElementById('root'));
-  </script>
+    <script src="js/script.js"></script>
 </body>
 </html>
